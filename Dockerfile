@@ -1,14 +1,16 @@
 FROM kicbase/stable:v0.0.50
 
+ARG TARGETARCH
+
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates curl docker.io \
+    && apt-get install -y --no-install-recommends ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSLo /usr/local/bin/minikube \
-        https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+        "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-${TARGETARCH}" \
     && chmod +x /usr/local/bin/minikube \
     && curl -fsSLo /usr/local/bin/kubectl \
-        "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+        "https://dl.k8s.io/release/$(curl -fsSL https://dl.k8s.io/release/stable.txt)/bin/linux/${TARGETARCH}/kubectl" \
     && chmod +x /usr/local/bin/kubectl
 
 WORKDIR /bernstein
