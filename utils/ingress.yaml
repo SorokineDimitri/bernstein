@@ -4,6 +4,7 @@ metadata:
   name: poll-ingress
   namespace: default
 spec:
+  ingressClassName: traefik
   rules:
     - host: poll.dop.io
       http:
@@ -12,6 +13,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: poll
+                name: poll-service
                 port:
                   number: 80
