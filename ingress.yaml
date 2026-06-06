@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: poll-ingress
+  name: app-ingress
   namespace: default
 spec:
   rules:
@@ -13,5 +13,15 @@ spec:
             backend:
               service:
                 name: poll
+                port:
+                  number: 80
+    - host: result.dop.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: result
                 port:
                   number: 80
