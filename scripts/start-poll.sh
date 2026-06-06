@@ -46,5 +46,5 @@ done
 echo "6. Show Poll resources"
 minikube --profile="${profile_name}" kubectl -- get deployment poll
 minikube --profile="${profile_name}" kubectl -- get service poll-service
-minikube --profile="${profile_name}" kubectl -- get ingress poll-ingress
+minikube --profile="${profile_name}" kubectl -- get ingress app-ingress
 minikube --profile="${profile_name}" kubectl -- get pods -l app=poll

@@ -8,4 +8,5 @@ set -euo pipefail
 ./scripts/start-worker.sh
 ./scripts/start-traefik.sh
 ./scripts/start-poll.sh
+./scripts/start-result.sh
 ./scripts/expose-services.sh

@@ -47,6 +47,7 @@ fi
 
 echo "3. Expose Poll and cAdvisor"
 echo "Poll:     http://poll.dop.io:30021"
+echo "Result:   http://result.dop.io:30021"
 echo "cAdvisor: http://localhost:8080"
 echo
 echo "Keep this terminal open. Stop with Ctrl+C."
@@ -67,9 +68,11 @@ echo
 echo "4. Wait for routes"
 sleep 1
 wait_for_url "Poll" "http://poll.dop.io:30021/" --resolve "poll.dop.io:30021:127.0.0.1"
+wait_for_url "Result" "http://result.dop.io:30021/" --resolve "result.dop.io:30021:127.0.0.1"
 wait_for_url "cAdvisor" "http://localhost:8080/"
 
 open "http://poll.dop.io:30021/"
+open "http://result.dop.io:30021/"
 open "http://localhost:8080/"
 
 wait
