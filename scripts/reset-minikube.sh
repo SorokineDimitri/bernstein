@@ -3,6 +3,17 @@ set -euo pipefail
 
 profile="bernstein"
 postgres_volume_path="/data/postgres"
+docker_images=(
+  "kicbase/stable:v0.0.50"
+  "gcr.io/k8s-minikube/kicbase:v0.0.50"
+  "redis:5.0"
+  "postgres:12"
+  "traefik:2.7"
+  "gcr.io/cadvisor/cadvisor:latest"
+  "epitechcontent/t-dop-600-poll:k8s"
+  "epitechcontent/t-dop-600-worker:k8s"
+  "epitechcontent/t-dop-600-result:k8s"
+)
 
 if minikube --profile="${profile}" status >/dev/null 2>&1; then
   echo "1. Delete PostgreSQL Kubernetes objects"
@@ -22,5 +33,12 @@ fi
 
 echo "3. Delete Minikube profile"
 minikube --profile="${profile}" delete
+
+echo "4. Delete Docker images"
+for image in "${docker_images[@]}"; do
+  docker image rm "${image}" >/dev/null 2>&1 || true
+done
+
+docker image prune -f >/dev/null
 
 echo "Reset done."
