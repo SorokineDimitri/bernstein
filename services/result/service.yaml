@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: poll-service
+  name: result
   namespace: default
 spec:
   selector:
-    app: poll
+    app: result
   ports:
     - protocol: TCP
       port: 80

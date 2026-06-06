@@ -32,10 +32,19 @@ fi
 echo "3. Apply Poll manifests"
 minikube --profile="${profile_name}" kubectl -- apply -f services/poll/deployment.yaml
 minikube --profile="${profile_name}" kubectl -- apply -f services/poll/service.yaml
-minikube --profile="${profile_name}" kubectl -- apply -f ingress.yaml
+minikube --profile="${profile_name}" kubectl -- apply -f utils/ingress.yaml
 
-echo "4. Show Poll resources"
+echo "4. Wait for Poll rollout"
+minikube --profile="${profile_name}" kubectl -- rollout status deployment/poll --timeout=180s
+
+echo "5. Wait for Poll service endpoints"
+until minikube --profile="${profile_name}" kubectl -- get endpoints poll-service -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; do
+  echo "Poll service endpoints are not ready yet; retrying..."
+  sleep 2
+done
+
+echo "6. Show Poll resources"
 minikube --profile="${profile_name}" kubectl -- get deployment poll
-minikube --profile="${profile_name}" kubectl -- get service poll
-minikube --profile="${profile_name}" kubectl -- get ingress poll-ingress
+minikube --profile="${profile_name}" kubectl -- get service poll-service
+minikube --profile="${profile_name}" kubectl -- get ingress app-ingress
 minikube --profile="${profile_name}" kubectl -- get pods -l app=poll

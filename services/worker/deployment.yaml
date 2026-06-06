@@ -1,25 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: worker
   namespace: default
   labels:
-    app: postgres
+    app: worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: worker
   template:
     metadata:
       labels:
-        app: postgres
+        app: worker
     spec:
       restartPolicy: Always
       containers:
-        - name: postgres
-          image: postgres:12
+        - name: worker
+          image: epitechcontent/t-dop-600-worker:k8s
           envFrom:
+            - configMapRef:
+                name: redis-configmap
             - configMapRef:
                 name: postgres-configmap
           env:
@@ -33,12 +35,6 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: password
-          ports:
-            - containerPort: 5432
-          volumeMounts:
-            - name: postgres-data
-              mountPath: /var/lib/postgresql/data
-      volumes:
-        - name: postgres-data
-          persistentVolumeClaim:
-            claimName: postgres-claim
+          resources:
+            limits:
+              memory: "256Mi"
