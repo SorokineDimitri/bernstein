@@ -57,12 +57,23 @@ if ! minikube --profile="${profile_name}" kubectl -- get secret postgres-secret 
   exit 1
 fi
 
-echo "3. Apply Worker manifest"
+echo "3. Wait for Redis and PostgreSQL endpoints"
+until minikube --profile="${profile_name}" kubectl -- get endpoints redis-service -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; do
+  echo "Redis endpoints are not ready yet; retrying..."
+  sleep 2
+done
+
+until minikube --profile="${profile_name}" kubectl -- get endpoints postgres-service -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; do
+  echo "PostgreSQL endpoints are not ready yet; retrying..."
+  sleep 2
+done
+
+echo "4. Apply Worker manifest"
 minikube --profile="${profile_name}" kubectl -- apply -f services/worker/deployment.yaml
 
-echo "4. Wait for Worker rollout"
+echo "5. Wait for Worker rollout"
 minikube --profile="${profile_name}" kubectl -- rollout status deployment/worker --timeout=180s
 
-echo "5. Show Worker resources"
+echo "6. Show Worker resources"
 minikube --profile="${profile_name}" kubectl -- get deployment worker
 minikube --profile="${profile_name}" kubectl -- get pods -l app=worker

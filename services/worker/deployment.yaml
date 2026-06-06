@@ -24,8 +24,17 @@ spec:
                 name: redis-configmap
             - configMapRef:
                 name: postgres-configmap
-            - secretRef:
-                name: postgres-secret
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
           resources:
             limits:
               memory: "256Mi"
