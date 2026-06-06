@@ -22,8 +22,17 @@ spec:
           envFrom:
             - configMapRef:
                 name: postgres-configmap
-            - secretRef:
-                name: postgres-secret
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
           ports:
             - containerPort: 5432
           volumeMounts:
