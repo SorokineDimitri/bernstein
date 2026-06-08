@@ -45,17 +45,19 @@ if ! grep -q "poll.dop.io" /etc/hosts; then
   sudo sh -c 'echo "127.0.0.1 poll.dop.io result.dop.io" >> /etc/hosts'
 fi
 
-echo "3. Expose Poll and cAdvisor"
-echo "Poll:     http://poll.dop.io:30021"
-echo "Result:   http://result.dop.io:30021"
-echo "cAdvisor: http://localhost:8080"
+echo "3. Expose services"
+echo "Poll:              http://poll.dop.io:30021"
+echo "Result:            http://result.dop.io:30021"
+echo "Traefik dashboard: http://localhost:30042"
+echo "cAdvisor:          http://localhost:8080"
 echo
 echo "Keep this terminal open. Stop with Ctrl+C."
 
 minikube --profile="${profile}" kubectl -- port-forward \
   -n kube-public \
   service/traefik-service \
-  30021:80 >/dev/null &
+  30021:80 \
+  30042:8080 >/dev/null &
 pids+=("$!")
 
 minikube --profile="${profile}" kubectl -- port-forward \
@@ -69,10 +71,12 @@ echo "4. Wait for routes"
 sleep 1
 wait_for_url "Poll" "http://poll.dop.io:30021/" --resolve "poll.dop.io:30021:127.0.0.1"
 wait_for_url "Result" "http://result.dop.io:30021/" --resolve "result.dop.io:30021:127.0.0.1"
+wait_for_url "Traefik dashboard" "http://localhost:30042"
 wait_for_url "cAdvisor" "http://localhost:8080/"
 
 open "http://poll.dop.io:30021/"
 open "http://result.dop.io:30021/"
+open "http://localhost:30042"
 open "http://localhost:8080/"
 
 wait

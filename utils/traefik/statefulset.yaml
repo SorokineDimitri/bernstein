@@ -1,11 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: traefik-deployment
+  name: traefik-statefulset
   namespace: kube-public
   labels:
     app: traefik
 spec:
+  serviceName: traefik-service
   replicas: 2
   selector:
     matchLabels:
