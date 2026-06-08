@@ -28,11 +28,12 @@ minikube --profile="${profile}" kubectl -- create secret generic postgres-secret
 echo "3. Apply PostgreSQL manifests"
 minikube --profile="${profile}" kubectl -- apply -f db/postgres/configmap.yaml
 minikube --profile="${profile}" kubectl -- apply -f db/postgres/volume.yaml
-minikube --profile="${profile}" kubectl -- apply -f db/postgres/deployment.yaml
 minikube --profile="${profile}" kubectl -- apply -f db/postgres/service.yaml
+minikube --profile="${profile}" kubectl -- delete deployment postgres-deployment --ignore-not-found
+minikube --profile="${profile}" kubectl -- apply -f db/postgres/statefulset.yaml
 
 echo "4. Wait for PostgreSQL rollout"
-minikube --profile="${profile}" kubectl -- rollout status deployment/postgres-deployment --timeout=180s
+minikube --profile="${profile}" kubectl -- rollout status statefulset/postgres-statefulset --timeout=180s
 
 echo "5. Wait for PostgreSQL readiness"
 postgres_pod="$(minikube --profile="${profile}" kubectl -- get pods -l app=postgres -o jsonpath='{.items[0].metadata.name}')"
@@ -56,7 +57,7 @@ minikube --profile="${profile}" kubectl -- exec -i "${postgres_pod}" -- env PGPA
 echo "7. Show PostgreSQL resources"
 minikube --profile="${profile}" kubectl -- get configmap postgres-configmap
 minikube --profile="${profile}" kubectl -- get secret postgres-secret
-minikube --profile="${profile}" kubectl -- get deployment postgres-deployment
+minikube --profile="${profile}" kubectl -- get statefulset postgres-statefulset
 minikube --profile="${profile}" kubectl -- get service postgres-service
 minikube --profile="${profile}" kubectl -- get pvc postgres-claim
 minikube --profile="${profile}" kubectl -- get pods -l app=postgres

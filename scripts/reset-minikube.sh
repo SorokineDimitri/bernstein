@@ -18,6 +18,7 @@ docker_images=(
 if minikube --profile="${profile}" status >/dev/null 2>&1; then
   echo "1. Delete PostgreSQL Kubernetes objects"
   minikube --profile="${profile}" kubectl -- delete deployment postgres-deployment --ignore-not-found
+  minikube --profile="${profile}" kubectl -- delete statefulset postgres-statefulset --ignore-not-found
   minikube --profile="${profile}" kubectl -- delete pvc postgres-claim --ignore-not-found
   minikube --profile="${profile}" kubectl -- delete pv postgres-volume --ignore-not-found
 
