@@ -52,13 +52,13 @@ echo "4. Wait for Result rollout"
 minikube --profile="${profile_name}" kubectl -- rollout status deployment/result --timeout=180s
 
 echo "5. Wait for Result service endpoints"
-until minikube --profile="${profile_name}" kubectl -- get endpoints result -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; do
+until minikube --profile="${profile_name}" kubectl -- get endpoints result-service -o jsonpath='{.subsets[*].addresses[*].ip}' | grep -q .; do
   echo "Result service endpoints are not ready yet; retrying..."
   sleep 2
 done
 
 echo "6. Show Result resources"
 minikube --profile="${profile_name}" kubectl -- get deployment result
-minikube --profile="${profile_name}" kubectl -- get service result
+minikube --profile="${profile_name}" kubectl -- get service result-service
 minikube --profile="${profile_name}" kubectl -- get ingress app-ingress
 minikube --profile="${profile_name}" kubectl -- get pods -l app=result
